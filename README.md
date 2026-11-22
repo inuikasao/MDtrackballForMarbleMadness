@@ -1,4 +1,4 @@
-# MDtrackballForMarbleMadness#
+# MDtrackballForMarbleMadness
 
 USB トラックボールを、日本版メガドライブの「日本版セガマウス」に見せかけて、
 **マーブルマッドネスをトラックボールで遊ぶ**ためのアダプターです(Raspberry Pi Pico 2 使用)。
