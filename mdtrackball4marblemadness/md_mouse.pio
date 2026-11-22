@@ -1,0 +1,46 @@
+; md_mouse.pio  -  メガドライブ(日本版セガマウス)エミュレーション用 PIO (31命令)
+.program md_mouse
+.side_set 1 opt
+
+.define public TL_WAIT 31          ; 待ち時間 = (TL_WAIT+1) * 8 サイクル (150MHzで約1.7us)
+
+idle:
+    mov pins, null                 ; D=0000
+wait_th_fall:
+    jmp pin, check_tr              ; TH=1 の間は TR を見て TL=TR に合わせる
+th_fell:
+    set pins, 11        side 1     ; n1: D=0xB (TL=1)
+    out null, 32                   ; OSRを空にする(=このフレームはまだワード未取得)
+    set y, 0                       ; 次に待つ {TR,TH} の値 (TR=0,TH=0)
+poll:
+    jmp pin, idle                  ; THが上がったら、いつでもアイドルへ
+    mov isr, null
+    in pins, 2                     ; ISR = {TR,TH}
+    mov x, isr
+    jmp x != y, poll               ; 期待する値になるまで繰り返し
+    jmp !osre, send                ; ワード取得済みなら送出へ
+    irq set 0                      ; フレーム開始をCPUへ通知
+    wait 0 irq 1                   ; CPUがFIFO入れ替え中なら待つ
+    pull noblock                   ; OSR = 最新ワード
+    mov isr, osr
+    push noblock                   ; 送るワードをCPUへエコー
+send:
+    out pins, 4                    ; D0-D3 にニブルを出す
+    set x, TL_WAIT
+wait_us:
+    jmp x-- wait_us     [7]        ; データ確定待ち
+    jmp !y, tl_low                 ; y==0 → TR=0 だったので TL=0 側へ
+    set y, 0            side 1     ; TR=1 だった → TL=1、次は TR=0 を待つ
+    jmp poll
+tl_low:
+    set y, 2            side 0     ; TL=0、次は TR=1 を待つ ({TR,TH}=2)
+    jmp poll
+check_tr:
+    set y, 1                       ; {TR=0, TH=1} = 1
+    mov isr, null
+    in pins, 2
+    mov x, isr
+    jmp x != y, tl_hi
+    jmp wait_th_fall    side 0     ; TH=1, TR=0 → TL=0 にして戻る
+tl_hi:
+    jmp wait_th_fall    side 1     ; TH=1, TR=1 → TL=1 にして戻る
