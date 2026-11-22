@@ -103,7 +103,7 @@ An adapter that lets a USB trackball pose as a **Japanese Sega Mouse** on a Japa
 
 ## Important: scope
 
-- This is built **only for the Japanese Mega Drive + the Japanese Sega Mouse protocol + the Japanese Tengen release of Marble Madness**.
+- This is built **only for JP version Mega Drive + Sega Mouse protocol + JP Tengen release of Marble Madness**.
 - I don't know whether it works with other games, consoles, or setups (untested).
   It probably won't work with the Genesis (overseas) Mega Mouse or the EA release of Marble Madness.
 - It exists purely to **play Marble Madness with a trackball**.
