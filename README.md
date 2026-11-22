@@ -95,3 +95,101 @@ UF2 は、Arduino IDE の「スケッチ → コンパイルしたバイナリ�
 ## 免責
 
 自作の趣味のプロジェクトです。動作の保証はありません。接続や改造は、自己責任でお願いします。
+
+
+# MD Trackball Adapter for Marble Madness
+
+An adapter that lets a USB trackball pose as a **Japanese Sega Mouse** on a Japanese Mega Drive, so you can **play Marble Madness with a trackball** (built on a Raspberry Pi Pico 2).
+
+## Important: scope
+
+- This is built **only for the Japanese Mega Drive + the Japanese Sega Mouse protocol + the Japanese Tengen release of Marble Madness**.
+- I don't know whether it works with other games, consoles, or setups (untested).
+  It probably won't work with the Genesis (overseas) Mega Mouse or the EA release of Marble Madness.
+- It exists purely to **play Marble Madness with a trackball**.
+  **It is not a general-purpose adapter for using a USB mouse in place of a Sega Mouse.**
+- Only the left/right buttons and movement are supported. The middle button, START, and the wheel are not.
+
+## What you need
+
+- Raspberry Pi Pico 2
+- OTG adapter (micro-B to USB-A female)
+- A USB trackball (one that works as an HID boot mouse)
+- A DE-9 cable to plug into the Mega Drive controller port
+- 1 kΩ resistors x 2
+
+## Wiring
+
+Wire it exactly like this.
+
+| MD DE-9 | Signal | Pico 2 | Notes |
+|---|---|---|---|
+| 1 | D0 | GP2 | Direct |
+| 2 | D1 | GP3 | Direct |
+| 3 | D2 | GP4 | Direct |
+| 4 | D3 | GP5 | Direct |
+| 5 | +5V | VBUS (pin 40) | Direct |
+| 6 | TL | GP6 | Direct |
+| 7 | TH | GP7 | Put a 1 kΩ resistor in series |
+| 8 | GND | GND | Direct |
+| 9 | TR | GP8 | Put a 1 kΩ resistor in series |
+
+- Connect the trackball to the Pico 2's micro-B port through the OTG adapter.
+  Power comes from the MD's 5V into VBUS, and it also powers the trackball.
+- **Never connect the Pico to a PC and the MD at the same time.** Unplug it from the MD when connecting to a PC.
+- TH and TR feed 5V signals into the 3.3V Pico through 1 kΩ. This works in my setup,
+  but 5V tolerance is not guaranteed. Use at your own risk.
+- Large trackballs can draw a lot of current.
+
+## Flashing
+
+### Normal use: flash the UF2
+
+1. Hold the **BOOTSEL** button on the Pico 2 while connecting it to a PC (disconnect it from the MD and the trackball first).
+2. A drive named `RP2350` appears. Copy `md_mouse.uf2` onto it.
+3. It reboots by itself. That's it.
+
+### To change sensitivity etc.: flash from the `.ino`
+
+1. Install **arduino-pico** (Earle Philhower's core) and the **Adafruit TinyUSB Library** in the Arduino IDE.
+2. Put these 6 files in a folder named `md_mouse/`:
+   `md_mouse.ino` / `md_mouse.pio` / `md_mouse.pio.h` / `md_frame.h` / `hid_mouse.h` / `md_slot.h`
+3. Tools settings:
+   - Board: **Raspberry Pi Pico 2**
+   - USB Stack: **Adafruit TinyUSB Host (native)**
+4. Edit the settings at the top of `md_mouse.ino`, then flash (hold BOOTSEL while connecting).
+
+| Setting | Default | Meaning |
+|---|---|---|
+| `DRIVE_MODE` | `2` | Drive the signals from power-on. **Do not change this** (Marble Madness checks for the mouse right at boot) |
+| `INVERT_X`, `INVERT_Y` | `0` | Set to `1` if left/right or up/down is reversed |
+| `SWAP_BUTTONS` | `0` | Set to `1` if the left/right buttons are swapped |
+| `SPEED_NUM`, `SPEED_DEN` | `1`, `1` | Sensitivity. e.g. half speed: `1` and `2`; double speed: `2` and `1` |
+| `DIAG_LED` | `0` | Diagnostic LED display. Leave at `0` for normal use |
+| `DEBUG_UART` | `0` | Serial debug output. Leave at `0` if nothing is connected |
+
+You can also build the UF2 yourself with "Sketch > Export Compiled Binary" in the Arduino IDE.
+
+If you edit `md_mouse.pio`, you must regenerate `md_mouse.pio.h` with `pioasm`:
+
+```
+<arduino15>/packages/rp2040/tools/pqt-pioasm/<ver>/pioasm -o c-sdk md_mouse.pio md_mouse.pio.h
+```
+
+## Usage
+
+1. With the MD powered off, plug the adapter into **controller port 1**.
+2. Connect the trackball to the Pico 2 through the OTG adapter.
+3. Power on the MD and start Marble Madness.
+   If the mouse isn't recognized, reset the MD.
+
+## Technical notes
+
+- The Japanese Sega Mouse's 10-nibble protocol is implemented in PIO.
+- **TL follows TR even while TH=1 (idle).** At boot, Marble Madness drives TR=0 with TH=1
+  and checks that TL returns 0. Without this, the game freezes at startup.
+- The Y axis is inverted to match the Japanese mouse.
+
+## Disclaimer
+
+This is a hobby project. No warranty. Wiring and modifications are at your own risk.
