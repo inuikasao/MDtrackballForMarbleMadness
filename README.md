@@ -1,6 +1,6 @@
 # MDtrackballForMarbleMadness
 
-USB トラックボールを、日本版メガドライブの「日本版セガマウス」に見せかけて、
+USB トラックボールを、メガドライブの「セガマウス」に見せかけて、
 **マーブルマッドネスをトラックボールで遊ぶ**ためのアダプターです(Raspberry Pi Pico 2 使用)。
 
 ## 重要: 対象範囲
@@ -107,7 +107,7 @@ An adapter that lets a USB trackball pose as a **Japanese Sega Mouse** on a Japa
 - I don't know whether it works with other games, consoles, or setups (untested).
   It probably won't work with the Genesis (overseas) Mega Mouse or the EA release of Marble Madness.
 - It exists purely to **play Marble Madness with a trackball**.
-  **It is not a general-purpose adapter for using a USB mouse in place of a Sega Mouse.**
+  **It is not a general-purpose adapter for using a USB mouse in place of a Sega Mouse/Mega Mouse.**
 - Only the left/right buttons and movement are supported. The middle button, START, and the wheel are not.
 
 ## What you need
