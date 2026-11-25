@@ -18,7 +18,7 @@ USB トラックボールを、メガドライブの「セガマウス」に見�
 - OTG アダプタ(micro-B → USB-A メス)
 - USB トラックボール(HID ブートマウスとして動くもの)
 - メガドライブのコントローラ端子につなぐ D-sub9 ケーブル
-- 抵抗 1kΩ × 2
+- 抵抗 1kΩ
 
 ## 配線
 
@@ -34,12 +34,12 @@ USB トラックボールを、メガドライブの「セガマウス」に見�
 | 6 | TL | GP6 | 直結 |
 | 7 | TH | GP7 | 1kΩ を直列に入れる |
 | 8 | GND | GND | 直結 |
-| 9 | TR | GP8 | 1kΩ を直列に入れる |
+| 9 | TR | GP8 | 直結 |
 
 - トラックボールは、Pico 2 の micro-B 端子に、OTG アダプタ経由でつなぎます。
   電源は MD の 5V から VBUS へ供給し、トラックボールにも、ここから給電されます。
 - **PC と MD に、同時につながないでください。** PC につなぐときは、MD から外します。
-- TH と TR は、5V の信号を 1kΩ 経由で、3.3V の Pico に入れます。この構成で動作しましたが、
+- TH は、5V の信号を 1kΩ 経由で、3.3V の Pico に入れます。この構成で動作しましたが、
   5V 耐性は保証できません。自己責任でお願いします。
 - 大きなトラックボールは、消費電流が大きい場合があります。
 
@@ -116,7 +116,7 @@ An adapter that lets a USB trackball pose as a **Japanese Sega Mouse** on a Japa
 - OTG adapter (micro-B to USB-A female)
 - A USB trackball (one that works as an HID boot mouse)
 - A DE-9 cable to plug into the Mega Drive controller port
-- 1 kΩ resistors x 2
+- 1 kΩ resistors
 
 ## Wiring
 
@@ -132,7 +132,7 @@ Wire it exactly like this.
 | 6 | TL | GP6 | Direct |
 | 7 | TH | GP7 | Put a 1 kΩ resistor in series |
 | 8 | GND | GND | Direct |
-| 9 | TR | GP8 | Put a 1 kΩ resistor in series |
+| 9 | TR | GP8 | Direct |
 
 - Connect the trackball to the Pico 2's micro-B port through the OTG adapter.
   Power comes from the MD's 5V into VBUS, and it also powers the trackball.
